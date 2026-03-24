@@ -1,0 +1,295 @@
+-- ============================================
+-- HỆ THỐNG QUẢN LÝ THƯ VIỆN - DATABASE SCHEMA
+-- ============================================
+
+CREATE DATABASE IF NOT EXISTS quan_ly_thu_vien
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE quan_ly_thu_vien;
+
+---
+
+-- 1. BẢNG NGƯỜI DÙNG
+
+---
+
+CREATE TABLE nguoi_dung (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ho_ten VARCHAR(255) NOT NULL,
+gioi_tinh VARCHAR(10),
+ngay_sinh DATETIME,
+cccd VARCHAR(20),
+email VARCHAR(255),
+sdt VARCHAR(20),
+dia_chi VARCHAR(500),
+ma_so_the VARCHAR(50),
+loai_the VARCHAR(50),
+hinh_anh VARCHAR(500),
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ngay_het_han DATETIME,
+ngay_khoa_the DATETIME,
+li_do_khoa VARCHAR(500),
+ngay_thay_doi DATETIME,
+li_do_thay_doi VARCHAR(500),
+danh_tieng INT DEFAULT 0,
+quyen VARCHAR(50),
+trang_thai VARCHAR(50)
+);
+
+---
+
+-- 2. BẢNG TÁC GIẢ
+
+---
+
+CREATE TABLE tac_gia (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ten VARCHAR(255) NOT NULL,
+ngay_sinh DATETIME,
+que_huong VARCHAR(255)
+);
+
+---
+
+-- 3. BẢNG THỂ LOẠI
+
+---
+
+CREATE TABLE the_loai (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ten VARCHAR(255) NOT NULL,
+the_loai_cha INT,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ngay_cap_nhat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+trang_thai VARCHAR(50) NOT NULL,
+CONSTRAINT fk_theloai_cha FOREIGN KEY (the_loai_cha) REFERENCES the_loai(id)
+ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+---
+
+-- 4. BẢNG NHÀ XUẤT BẢN
+
+---
+
+CREATE TABLE nha_xuat_ban (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ten VARCHAR(255) NOT NULL,
+dia_chi VARCHAR(500),
+sdt VARCHAR(20),
+email VARCHAR(255),
+website VARCHAR(255),
+ghi_chu TEXT,
+trang_thai VARCHAR(50) NOT NULL
+);
+
+---
+
+-- 5. BẢNG SÁCH
+
+---
+
+CREATE TABLE sach (
+id INT AUTO_INCREMENT PRIMARY KEY,
+tieu_de VARCHAR(500) NOT NULL,
+ma_isbn VARCHAR(20),
+slug VARCHAR(500),
+ban_mem VARCHAR(500),
+nam_xuat_ban VARCHAR(10),
+phien_ban VARCHAR(50),
+gia_tien INT,
+so_trang INT,
+ngon_ngu VARCHAR(50),
+mo_ta TEXT,
+hinh_anh VARCHAR(500),
+so_luong_nhap INT DEFAULT 0,
+so_luong_ton INT DEFAULT 0,
+so_luong_cho_muon INT DEFAULT 0,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ngay_sua DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+trang_thai VARCHAR(50) NOT NULL,
+theloai_id INT NOT NULL,
+nhaxuatban_id INT NOT NULL,
+CONSTRAINT fk_sach_theloai FOREIGN KEY (theloai_id) REFERENCES the_loai(id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+CONSTRAINT fk_sach_nxb FOREIGN KEY (nhaxuatban_id) REFERENCES nha_xuat_ban(id)
+ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+---
+
+-- 6. BẢNG SÁCH - TÁC GIẢ (N-N)
+
+---
+
+CREATE TABLE sach_tacgia (
+sach_id INT NOT NULL,
+tac_gia_id INT NOT NULL,
+vai_tro VARCHAR(100),
+thu_tu INT,
+PRIMARY KEY (sach_id, tac_gia_id),
+CONSTRAINT fk_st_sach FOREIGN KEY (sach_id) REFERENCES sach(id)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT fk_st_tacgia FOREIGN KEY (tac_gia_id) REFERENCES tac_gia(id)
+ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+---
+
+-- 7. BẢNG VỊ TRÍ
+
+---
+
+CREATE TABLE vi_tri (
+id INT AUTO_INCREMENT PRIMARY KEY,
+gia_sach VARCHAR(100) NOT NULL,
+phong VARCHAR(100) NOT NULL,
+tang VARCHAR(50) NOT NULL,
+khu_vuc VARCHAR(100) NOT NULL
+);
+
+---
+
+-- 8. BẢNG ĐĂNG KÝ CÁ BIỆT
+
+---
+
+CREATE TABLE dang_ky_ca_biet (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ma_ca_biet VARCHAR(50) NOT NULL UNIQUE,
+tinh_trang VARCHAR(50) NOT NULL,
+trang_thai VARCHAR(50) NOT NULL,
+ngay_cho_muon DATETIME,
+ngay_nhan_sach DATETIME,
+ghi_chu TEXT,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ngay_sua DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+vitri_id INT NOT NULL,
+sach_id INT NOT NULL,
+CONSTRAINT fk_dkcb_vitri FOREIGN KEY (vitri_id) REFERENCES vi_tri(id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+CONSTRAINT fk_dkcb_sach FOREIGN KEY (sach_id) REFERENCES sach(id)
+ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+---
+
+-- 9. BẢNG ĐẶT MƯỢN
+
+---
+
+CREATE TABLE dat_muon (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ngay_het_han DATETIME NOT NULL,
+ngay_lay DATETIME,
+trang_thai VARCHAR(50) NOT NULL,
+ghi_chu TEXT,
+ngay_duyet DATETIME NOT NULL,
+sach_id INT NOT NULL,
+nguoidung_id INT NOT NULL,
+CONSTRAINT fk_dm_sach FOREIGN KEY (sach_id) REFERENCES sach(id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+CONSTRAINT fk_dm_nguoidung FOREIGN KEY (nguoidung_id) REFERENCES nguoi_dung(id)
+ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+---
+
+-- 10. BẢNG MƯỢN TRẢ
+
+---
+
+CREATE TABLE muon_tra (
+id INT AUTO_INCREMENT PRIMARY KEY,
+loai VARCHAR(50) NOT NULL,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+han_tra DATETIME NOT NULL,
+ngay_tra DATETIME,
+tien_phat INT DEFAULT 0,
+trang_thai VARCHAR(50) NOT NULL,
+ghi_chu TEXT,
+dkcb_id INT NOT NULL,
+nguoi_dung_id INT NOT NULL,
+CONSTRAINT fk_mt_dkcb FOREIGN KEY (dkcb_id) REFERENCES dang_ky_ca_biet(id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+CONSTRAINT fk_mt_nguoidung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id)
+ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+---
+
+-- 11. BẢNG FORM GÓP Ý
+
+---
+
+CREATE TABLE form_gop_y (
+id INT AUTO_INCREMENT PRIMARY KEY,
+ho_ten VARCHAR(255) NOT NULL,
+lien_he VARCHAR(255) NOT NULL,
+noi_dung TEXT NOT NULL,
+ngay_tao VARCHAR(50) NOT NULL,
+nguoi_dung_id INT NOT NULL,
+CONSTRAINT fk_fgy_nguoidung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id)
+ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+---
+
+-- 12. BẢNG CHỦ ĐỀ (DIỄN ĐÀN)
+
+---
+
+CREATE TABLE chu_de (
+id INT AUTO_INCREMENT PRIMARY KEY,
+tieu_de VARCHAR(500) NOT NULL,
+mo_ta TEXT,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+so_luong_xem INT DEFAULT 0,
+trang_thai VARCHAR(50) NOT NULL,
+nguoi_dung_id INT NOT NULL,
+CONSTRAINT fk_cd_nguoidung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id)
+ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+---
+
+-- 13. BẢNG BÀI ĐĂNG
+
+---
+
+CREATE TABLE bai_dang (
+id INT AUTO_INCREMENT PRIMARY KEY,
+noi_dung TEXT NOT NULL,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+so_luong_binh_luan INT DEFAULT 0,
+ngay_sua DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+trang_thai VARCHAR(50) NOT NULL,
+nguoi_dung_id INT NOT NULL,
+chude_id INT NOT NULL,
+CONSTRAINT fk_bd_nguoidung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+CONSTRAINT fk_bd_chude FOREIGN KEY (chude_id) REFERENCES chu_de(id)
+ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+---
+
+-- 14. BẢNG BÌNH LUẬN
+
+---
+
+CREATE TABLE binh_luan (
+id INT AUTO_INCREMENT PRIMARY KEY,
+noi_dung TEXT NOT NULL,
+ngay_tao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ngay_sua DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+trang_thai VARCHAR(50) NOT NULL,
+nguoi_dung_id INT NOT NULL,
+bai_dang_id INT NOT NULL,
+CONSTRAINT fk_bl_nguoidung FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id)
+ON DELETE RESTRICT ON UPDATE CASCADE,
+CONSTRAINT fk_bl_baidang FOREIGN KEY (bai_dang_id) REFERENCES bai_dang(id)
+ON DELETE CASCADE ON UPDATE CASCADE
+);
