@@ -1,0 +1,130 @@
+@model WebApp.Models.Sach
+@{
+    ViewData["Title"] = "Chỉnh sửa sách";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-action="Index" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h2 class="fw-bold mb-0">Chỉnh sửa sách</h2>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <h5 class="fw-semibold mb-3 text-primary">Thông tin cơ bản</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-8">
+                            <label asp-for="TieuDe" class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+                            <input asp-for="TieuDe" class="form-control" />
+                            <span asp-validation-for="TieuDe" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="MaIsbn" class="form-label fw-semibold">Mã ISBN</label>
+                            <input asp-for="MaIsbn" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="TheloaiId" class="form-label fw-semibold">Thể loại <span class="text-danger">*</span></label>
+                            <select asp-for="TheloaiId" asp-items="(SelectList)ViewBag.TheLoais" class="form-select">
+                                <option value="">-- Chọn thể loại --</option>
+                            </select>
+                            <span asp-validation-for="TheloaiId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NhaxuatbanId" class="form-label fw-semibold">Nhà xuất bản <span class="text-danger">*</span></label>
+                            <select asp-for="NhaxuatbanId" asp-items="(SelectList)ViewBag.NhaXuatBans" class="form-select">
+                                <option value="">-- Chọn NXB --</option>
+                            </select>
+                            <span asp-validation-for="NhaxuatbanId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-semibold mb-3 text-primary">Chi tiết xuất bản</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label asp-for="NamXuatBan" class="form-label fw-semibold">Năm xuất bản</label>
+                            <input asp-for="NamXuatBan" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="PhienBan" class="form-label fw-semibold">Phiên bản</label>
+                            <input asp-for="PhienBan" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="NgonNgu" class="form-label fw-semibold">Ngôn ngữ</label>
+                            <input asp-for="NgonNgu" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="SoTrang" class="form-label fw-semibold">Số trang</label>
+                            <input asp-for="SoTrang" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="GiaTien" class="form-label fw-semibold">Giá tiền (VNĐ)</label>
+                            <input asp-for="GiaTien" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Slug" class="form-label fw-semibold">Slug</label>
+                            <input asp-for="Slug" class="form-control" />
+                        </div>
+                    </div>
+
+                    <h5 class="fw-semibold mb-3 text-primary">Số lượng & Trạng thái</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label asp-for="SoLuongNhap" class="form-label fw-semibold">SL nhập</label>
+                            <input asp-for="SoLuongNhap" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="SoLuongTon" class="form-label fw-semibold">SL tồn</label>
+                            <input asp-for="SoLuongTon" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="SoLuongChoMuon" class="form-label fw-semibold">SL cho mượn</label>
+                            <input asp-for="SoLuongChoMuon" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="TrangThai" class="form-label fw-semibold">Trạng thái</label>
+                            <select asp-for="TrangThai" class="form-select">
+                                <option value="Hoạt động">Hoạt động</option>
+                                <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-semibold mb-3 text-primary">Hình ảnh & Mô tả</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="HinhAnh" class="form-label fw-semibold">Link hình ảnh</label>
+                            <input asp-for="HinhAnh" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="BanMem" class="form-label fw-semibold">Link bản mềm</label>
+                            <input asp-for="BanMem" class="form-control" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="MoTa" class="form-label fw-semibold">Mô tả</label>
+                            <textarea asp-for="MoTa" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light px-4">Hủy</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-1"></i> Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

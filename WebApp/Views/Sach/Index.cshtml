@@ -1,0 +1,143 @@
+@model IEnumerable<WebApp.Models.Sach>
+@{
+    ViewData["Title"] = "Quản lý Sách";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Quản lý Sách</h2>
+        <p class="text-muted mb-0">Tổng cộng <strong>@Model.Count()</strong> đầu sách</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary btn-lg shadow-sm">
+        <i class="bi bi-plus-lg me-1"></i> Thêm sách mới
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Tìm kiếm</label>
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control"
+                       placeholder="Tên sách hoặc ISBN..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Thể loại</label>
+                <select name="theloaiId" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    @foreach (var tl in (IEnumerable<WebApp.Models.TheLoai>)ViewBag.TheLoais)
+                    {
+                        <option value="@tl.Id" selected="@(ViewBag.TheloaiId != null && (int)ViewBag.TheloaiId == tl.Id)">@tl.Ten</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Trạng thái</label>
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="Hoạt động" selected="@(ViewBag.TrangThai == "Hoạt động")">Hoạt động</option>
+                    <option value="Ngừng hoạt động" selected="@(ViewBag.TrangThai == "Ngừng hoạt động")">Ngừng hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search me-1"></i> Lọc
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 60px">#</th>
+                    <th>Hình</th>
+                    <th>Tiêu đề</th>
+                    <th>ISBN</th>
+                    <th>Thể loại</th>
+                    <th>NXB</th>
+                    <th class="text-center">Số lượng</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th class="text-end" style="width: 160px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Không tìm thấy sách nào
+                        </td>
+                    </tr>
+                }
+                @{ var stt = 0; }
+                @foreach (var sach in Model)
+                {
+                    stt++;
+                    <tr>
+                        <td class="text-muted">@stt</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(sach.HinhAnh))
+                            {
+                                <img src="@sach.HinhAnh" alt="@sach.TieuDe" class="rounded"
+                                     style="width: 45px; height: 60px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                     style="width: 45px; height: 60px;">
+                                    <i class="bi bi-book text-muted"></i>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@sach.Id" class="fw-semibold text-decoration-none">
+                                @sach.TieuDe
+                            </a>
+                            @if (!string.IsNullOrEmpty(sach.NamXuatBan))
+                            {
+                                <br /><small class="text-muted">Năm: @sach.NamXuatBan</small>
+                            }
+                        </td>
+                        <td><code>@sach.MaIsbn</code></td>
+                        <td>@sach.Theloai?.Ten</td>
+                        <td>@sach.Nhaxuatban?.Ten</td>
+                        <td class="text-center">
+                            <span class="badge bg-info-subtle text-info-emphasis">@(sach.SoLuongTon ?? 0) / @(sach.SoLuongNhap ?? 0)</span>
+                        </td>
+                        <td class="text-center">
+                            @if (sach.TrangThai == "Hoạt động")
+                            {
+                                <span class="badge bg-success-subtle text-success-emphasis">@sach.TrangThai</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis">@sach.TrangThai</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@sach.Id" class="btn btn-sm btn-outline-warning" title="Sửa">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@sach.Id" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+@model WebApp.Models.Sach
+@{
+    ViewData["Title"] = "Xóa sách";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-action="Index" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h2 class="fw-bold mb-0">Xóa sách</h2>
+        </div>
+
+        <div class="card shadow-sm border-0 border-danger border-top border-3">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-danger-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 64px; height: 64px;">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Xác nhận xóa sách</h4>
+                    <p class="text-muted">Bạn có chắc chắn muốn xóa cuốn sách này không? Hành động này không thể hoàn tác.</p>
+                </div>
+
+                <div class="bg-light rounded p-3 mb-4">
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <td class="fw-semibold text-muted" style="width: 140px">Tiêu đề:</td>
+                            <td class="fw-bold">@Model.TieuDe</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-muted">ISBN:</td>
+                            <td><code>@Model.MaIsbn</code></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-muted">Thể loại:</td>
+                            <td>@Model.Theloai?.Ten</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-muted">Nhà xuất bản:</td>
+                            <td>@Model.Nhaxuatban?.Ten</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-muted">Trạng thái:</td>
+                            <td>
+                                <span class="badge @(Model.TrangThai == "Hoạt động" ? "bg-success-subtle text-success-emphasis" : "bg-secondary-subtle text-secondary-emphasis")">
+                                    @Model.TrangThai
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light px-4">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-trash me-1"></i> Xác nhận xóa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
