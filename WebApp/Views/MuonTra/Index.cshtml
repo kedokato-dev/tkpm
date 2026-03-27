@@ -1,0 +1,66 @@
+@model MuonTra
+
+@{
+    ViewData["Title"] = "Tạo phiếu mượn sách";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2><i class="bi bi-plus-circle"></i> Tạo phiếu mượn sách</h2>
+            <hr />
+
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NguoiDungId" class="form-label">Người mượn <span
+                        class="text-danger">*</span></label>
+                        <select asp-for="NguoiDungId" class="form-control" required>
+                            <option value="">-- Chọn người mượn --</option>
+                            @foreach (var user in (List<NguoiDung>)ViewBag.NguoiDung)
+                            {
+                                <option value="@user.Id">@user.HoTen (@user.MaSoThe)</option>
+                            }
+                        </select>
+                        <span asp-validation-for="NguoiDungId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DangKyCapBietId" class="form-label">Chọn sách <span
+                            class="text-danger">*</span></label>
+                            <select asp-for="DangKyCapBietId" class="form-control" required>
+                                <option value="">-- Chọn sách --</option>
+                                @foreach (var sach in (List<DangKyCapBiet>)ViewBag.Sach)
+                                {
+                                    <option value="@sach.Id">@sach.Sach?.TieuDe (@sach.MaCapBiet)</option>
+                                }
+                            </select>
+                            <span asp-validation-for="DangKyCapBietId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="HanTra" class="form-label">Hạn trả <span class="text-danger">*</span></label>
+                            <input type="datetime-local" asp-for="HanTra" class="form-control" required />
+                            <span asp-validation-for="HanTra" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GhiChu" class="form-label">Ghi chú</label>
+                            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                            <button type="submit" class="btn btn-primary">Tạo phiếu mượn</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @section Scripts {
+            @{
+                await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            }
+        }

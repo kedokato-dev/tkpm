@@ -40,6 +40,8 @@ public partial class QuanLyThuVienContext : DbContext
 
     public virtual DbSet<ViTri> ViTris { get; set; }
 
+    public DbSet<MuonTra> MuonTra { get; set; }
+    public DbSet<DangKyCapBiet> DangKyCapBiet { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BaiDang>(entity =>

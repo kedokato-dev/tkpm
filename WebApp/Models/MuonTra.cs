@@ -1,31 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApp.Models;
-
-public partial class MuonTra
+namespace WebApp.Models
 {
-    public int Id { get; set; }
+    [Table("muon_tra")]
+    public class MuonTra
+    {
+        [Key]
+        [Column("id")]
+        public int Id { get; set; }
 
-    public string Loai { get; set; } = null!;
+        [Column("loai")]
+        [Required(ErrorMessage = "Loại mượn không được để trống")]
+        [StringLength(50)]
+        public string Loai { get; set; } // "Mượn", "Gia hạn", etc.
 
-    public DateTime NgayTao { get; set; }
+        [Column("ngay_tao")]
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
-    public DateTime HanTra { get; set; }
+        [Column("han_tra")]
+        [Required(ErrorMessage = "Hạn trả không được để trống")]
+        public DateTime HanTra { get; set; }
 
-    public DateTime? NgayTra { get; set; }
+        [Column("ngay_tra")]
+        public DateTime? NgayTra { get; set; }
 
-    public int? TienPhat { get; set; }
+        [Column("tien_phat")]
+        public int? TienPhat { get; set; } = 0;
 
-    public string TrangThai { get; set; } = null!;
+        [Column("trang_thai")]
+        [Required(ErrorMessage = "Trạng thái không được để trống")]
+        [StringLength(50)]
+        public string TrangThai { get; set; } // "Đang mượn", "Đã trả", "Quá hạn"
 
-    public string? GhiChu { get; set; }
+        [Column("ghi_chu")]
+        [DataType(DataType.MultilineText)]
+        public string? GhiChu { get; set; }
 
-    public int DkcbId { get; set; }
+        [Column("dkcb_id")]
+        [Required]
+        public int DangKyCapBietId { get; set; }
 
-    public int NguoiDungId { get; set; }
+        [Column("nguoi_dung_id")]
+        [Required]
+        public int NguoiDungId { get; set; }
 
-    public virtual DangKyCaBiet Dkcb { get; set; } = null!;
+        // Navigation properties
+        [ForeignKey("DangKyCapBietId")]
+        public DangKyCapBiet? DangKyCapBiet { get; set; }
 
-    public virtual NguoiDung NguoiDung { get; set; } = null!;
+        [ForeignKey("NguoiDungId")]
+        public NguoiDung? NguoiDung { get; set; }
+    }
 }
