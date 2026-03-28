@@ -40,8 +40,6 @@ public partial class QuanLyThuVienContext : DbContext
 
     public virtual DbSet<ViTri> ViTris { get; set; }
 
-    public DbSet<MuonTra> MuonTra { get; set; }
-    public DbSet<DangKyCapBiet> DangKyCapBiet { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BaiDang>(entity =>
@@ -290,12 +288,12 @@ public partial class QuanLyThuVienContext : DbContext
 
             entity.ToTable("muon_tra", "QLTHUVIEN");
 
-            entity.HasIndex(e => e.DkcbId, "fk_mt_dkcb");
+            entity.HasIndex(e => e.DangKyCaBietId, "fk_mt_dkcb");
 
             entity.HasIndex(e => e.NguoiDungId, "fk_mt_nguoidung");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.DkcbId).HasColumnName("dkcb_id");
+            entity.Property(e => e.DangKyCaBietId).HasColumnName("dkcb_id");
             entity.Property(e => e.GhiChu)
                 .HasColumnType("text")
                 .HasColumnName("ghi_chu");
@@ -320,8 +318,8 @@ public partial class QuanLyThuVienContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("trang_thai");
 
-            entity.HasOne(d => d.Dkcb).WithMany(p => p.MuonTras)
-                .HasForeignKey(d => d.DkcbId)
+            entity.HasOne(d => d.DangKyCaBiet).WithMany(p => p.MuonTras)
+                .HasForeignKey(d => d.DangKyCaBietId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("fk_mt_dkcb");
 

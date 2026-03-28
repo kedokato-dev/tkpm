@@ -39,15 +39,15 @@ namespace WebApp.Models
 
         [Column("dkcb_id")]
         [Required]
-        public int DangKyCapBietId { get; set; }
+        public int DangKyCaBietId { get; set; }
 
         [Column("nguoi_dung_id")]
         [Required]
         public int NguoiDungId { get; set; }
 
         // Navigation properties
-        [ForeignKey("DangKyCapBietId")]
-        public DangKyCapBiet? DangKyCapBiet { get; set; }
+        [ForeignKey("DangKyCaBietId")]
+        public DangKyCaBiet? DangKyCaBiet { get; set; }
 
         [ForeignKey("NguoiDungId")]
         public NguoiDung? NguoiDung { get; set; }

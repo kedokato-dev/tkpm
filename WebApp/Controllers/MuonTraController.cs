@@ -17,9 +17,9 @@ namespace WebApp.Controllers
         // Danh sách phiếu mượn
         public async Task<IActionResult> Index()
         {
-            var muonTraList = await _context.MuonTra
+            var muonTraList = await _context.MuonTras
                 .Include(m => m.NguoiDung)
-                .Include(m => m.DangKyCapBiet)
+                .Include(m => m.DangKyCaBiet)
                     .ThenInclude(d => d.Sach)
                 .OrderByDescending(m => m.NgayTao)
                 .ToListAsync();
@@ -31,12 +31,12 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             // Lấy danh sách người dùng
-            var nguoiDungList = await _context.NguoiDung
+            var nguoiDungList = await _context.NguoiDungs
                 .Where(n => n.TrangThai == "Hoạt động")
                 .ToListAsync();
 
             // Lấy danh sách sách đang có sẵn
-            var sachList = await _context.DangKyCapBiet
+            var sachList = await _context.DangKyCaBiets
                 .Include(d => d.Sach)
                 .Where(d => d.TinhTrang == "Có sẵn") // Sách có sẵn để mượn
                 .ToListAsync();
@@ -55,14 +55,14 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 // Kiểm tra người dùng có tồn tại không
-                var nguoiDung = await _context.NguoiDung.FindAsync(muonTra.NguoiDungId);
+                var nguoiDung = await _context.NguoiDungs.FindAsync(muonTra.NguoiDungId);
                 if (nguoiDung == null)
                 {
                     ModelState.AddModelError("", "Người dùng không tồn tại");
                 }
 
                 // Kiểm tra sách có tồn tại không
-                var dangKyCapBiet = await _context.DangKyCapBiet.FindAsync(muonTra.DangKyCapBietId);
+                var dangKyCapBiet = await _context.DangKyCaBiets.FindAsync(muonTra.DangKyCaBietId);
                 if (dangKyCapBiet == null)
                 {
                     ModelState.AddModelError("", "Sách không tồn tại");
@@ -74,14 +74,14 @@ namespace WebApp.Controllers
                     muonTra.TrangThai = "Đang mượn";
                     muonTra.Loai = "Mượn";
 
-                    _context.MuonTra.Add(muonTra);
+                    _context.MuonTras.Add(muonTra);
 
                     // Cập nhật trạng thái sách
                     if (dangKyCapBiet != null)
                     {
                         dangKyCapBiet.TinhTrang = "Đã mượn";
                         dangKyCapBiet.NgayChoMuon = DateTime.Now;
-                        _context.DangKyCapBiet.Update(dangKyCapBiet);
+                        _context.DangKyCaBiets.Update(dangKyCapBiet);
                     }
 
                     await _context.SaveChangesAsync();
@@ -92,8 +92,8 @@ namespace WebApp.Controllers
             }
 
             // Nếu có lỗi, load lại dữ liệu
-            var nguoiDungList = await _context.NguoiDung.ToListAsync();
-            var sachList = await _context.DangKyCapBiet.Include(d => d.Sach).ToListAsync();
+            var nguoiDungList = await _context.NguoiDungs.ToListAsync();
+            var sachList = await _context.DangKyCaBiets.Include(d => d.Sach).ToListAsync();
 
             ViewBag.NguoiDung = nguoiDungList;
             ViewBag.Sach = sachList;
@@ -104,9 +104,9 @@ namespace WebApp.Controllers
         // Chi tiết phiếu mượn
         public async Task<IActionResult> Details(int id)
         {
-            var muonTra = await _context.MuonTra
+            var muonTra = await _context.MuonTras
                 .Include(m => m.NguoiDung)
-                .Include(m => m.DangKyCapBiet)
+                .Include(m => m.DangKyCaBiet)
                     .ThenInclude(d => d.Sach)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -121,15 +121,15 @@ namespace WebApp.Controllers
         // Form chỉnh sửa phiếu mượn
         public async Task<IActionResult> Edit(int id)
         {
-            var muonTra = await _context.MuonTra.FindAsync(id);
+            var muonTra = await _context.MuonTras.FindAsync(id);
 
             if (muonTra == null)
             {
                 return NotFound();
             }
 
-            var nguoiDungList = await _context.NguoiDung.ToListAsync();
-            var sachList = await _context.DangKyCapBiet.Include(d => d.Sach).ToListAsync();
+            var nguoiDungList = await _context.NguoiDungs.ToListAsync();
+            var sachList = await _context.DangKyCaBiets.Include(d => d.Sach).ToListAsync();
 
             ViewBag.NguoiDung = nguoiDungList;
             ViewBag.Sach = sachList;
@@ -151,7 +151,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.MuonTra.Update(muonTra);
+                    _context.MuonTras.Update(muonTra);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "Cập nhật phiếu mượn thành công!";
@@ -163,8 +163,8 @@ namespace WebApp.Controllers
                 }
             }
 
-            var nguoiDungList = await _context.NguoiDung.ToListAsync();
-            var sachList = await _context.DangKyCapBiet.Include(d => d.Sach).ToListAsync();
+            var nguoiDungList = await _context.NguoiDungs.ToListAsync();
+            var sachList = await _context.DangKyCaBiets.Include(d => d.Sach).ToListAsync();
 
             ViewBag.NguoiDung = nguoiDungList;
             ViewBag.Sach = sachList;
@@ -177,8 +177,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TraSach(int id, int? tienPhat)
         {
-            var muonTra = await _context.MuonTra
-                .Include(m => m.DangKyCapBiet)
+            var muonTra = await _context.MuonTras
+                .Include(m => m.DangKyCaBiet)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (muonTra == null)
@@ -191,14 +191,14 @@ namespace WebApp.Controllers
             muonTra.TienPhat = tienPhat ?? 0;
 
             // Cập nhật trạng thái sách
-            if (muonTra.DangKyCapBiet != null)
+            if (muonTra.DangKyCaBiet != null)
             {
-                muonTra.DangKyCapBiet.TinhTrang = "Có sẵn";
-                muonTra.DangKyCapBiet.NgayNhanSach = DateTime.Now;
-                _context.DangKyCapBiet.Update(muonTra.DangKyCapBiet);
+                muonTra.DangKyCaBiet.TinhTrang = "Có sẵn";
+                muonTra.DangKyCaBiet.NgayNhanSach = DateTime.Now;
+                _context.DangKyCaBiets.Update(muonTra.DangKyCaBiet);
             }
 
-            _context.MuonTra.Update(muonTra);
+            _context.MuonTras.Update(muonTra);
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Ghi nhận trả sách thành công!";
@@ -210,11 +210,11 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var muonTra = await _context.MuonTra.FindAsync(id);
+            var muonTra = await _context.MuonTras.FindAsync(id);
 
             if (muonTra != null)
             {
-                _context.MuonTra.Remove(muonTra);
+                _context.MuonTras.Remove(muonTra);
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Xóa phiếu mượn thành công!";

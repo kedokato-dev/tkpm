@@ -27,16 +27,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="DangKyCapBietId" class="form-label">Chọn sách <span
+                        <label asp-for="DangKyCaBietId" class="form-label">Chọn sách <span
                             class="text-danger">*</span></label>
-                            <select asp-for="DangKyCapBietId" class="form-control" required>
+                            <select asp-for="DangKyCaBietId" class="form-control" required>
                                 <option value="">-- Chọn sách --</option>
-                                @foreach (var sach in (List<DangKyCapBiet>)ViewBag.Sach)
+                                @foreach (var sach in (List<DangKyCaBiet>)ViewBag.Sach)
                                 {
-                                    <option value="@sach.Id">@sach.Sach?.TieuDe (@sach.MaCapBiet)</option>
+                                    <option value="@sach.Id">@sach.Sach?.TieuDe (@sach.MaCaBiet)</option>
                                 }
                             </select>
-                            <span asp-validation-for="DangKyCapBietId" class="text-danger"></span>
+                            <span asp-validation-for="DangKyCaBietId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
