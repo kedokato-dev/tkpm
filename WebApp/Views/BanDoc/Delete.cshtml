@@ -1,0 +1,19 @@
+@model WebApp.Models.NguoiDung
+@{
+    ViewData["Title"] = "Xóa Bạn đọc";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Bạn có chắc muốn xóa bạn đọc này không?</h3>
+<div>
+    <h4>@Model.HoTen</h4>
+    <p>Email: @Model.Email</p>
+    <p>SĐT: @Model.Sdt</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

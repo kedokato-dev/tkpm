@@ -1,0 +1,45 @@
+@model WebApp.Models.NguoiDung
+@{
+    ViewData["Title"] = "Sửa Bạn đọc";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label>Họ Tên</label>
+        <input asp-for="HoTen" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Giới Tính</label>
+        <input asp-for="GioiTinh" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Ngày Sinh</label>
+        <input asp-for="NgaySinh" type="date" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Email</label>
+        <input asp-for="Email" type="email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>SĐT</label>
+        <input asp-for="Sdt" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Địa Chỉ</label>
+        <input asp-for="DiaChi" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Loại Thẻ</label>
+        <input asp-for="LoaiThe" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Trạng Thái</label>
+        <input asp-for="TrangThai" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
