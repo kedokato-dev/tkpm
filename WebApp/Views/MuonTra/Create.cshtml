@@ -10,57 +10,91 @@
             <h2><i class="bi bi-plus-circle"></i> Tạo phiếu mượn sách</h2>
             <hr />
 
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <form method="get" id="formPhieu">
+                <div class="mb-3">
+                    <label for="nguoiMuon" class="form-label">Người mượn <span class="text-danger">*</span></label>
+                    <input type="text" id="nguoiMuon" class="form-control" placeholder="Nhập tên người mượn" required />
+                </div>
 
                 <div class="mb-3">
-                    <label asp-for="NguoiDungId" class="form-label">Người mượn <span
-                        class="text-danger">*</span></label>
-                        <select asp-for="NguoiDungId" class="form-control" required>
-                            <option value="">-- Chọn người mượn --</option>
-                            @foreach (var user in (List<NguoiDung>)ViewBag.NguoiDung)
-                            {
-                                <option value="@user.Id">@user.HoTen (@user.MaSoThe)</option>
-                            }
-                        </select>
-                        <span asp-validation-for="NguoiDungId" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="DangKyCaBietId" class="form-label">Chọn sách <span
-                            class="text-danger">*</span></label>
-                            <select asp-for="DangKyCaBietId" class="form-control" required>
-                                <option value="">-- Chọn sách --</option>
-                                @foreach (var sach in (List<DangKyCaBiet>)ViewBag.Sach)
-                                {
-                                    <option value="@sach.Id">@sach.Sach?.TieuDe (@sach.MaCaBiet)</option>
-                                }
-                            </select>
-                            <span asp-validation-for="DangKyCaBietId" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="HanTra" class="form-label">Hạn trả <span class="text-danger">*</span></label>
-                            <input type="datetime-local" asp-for="HanTra" class="form-control" required />
-                            <span asp-validation-for="HanTra" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="GhiChu" class="form-label">Ghi chú</label>
-                            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
-                            <button type="submit" class="btn btn-primary">Tạo phiếu mượn</button>
-                        </div>
-                    </form>
+                    <label for="sachMuon" class="form-label">Chọn sách <span class="text-danger">*</span></label>
+                    <input type="text" id="sachMuon" class="form-control" placeholder="Nhập tên sách" required />
                 </div>
-            </div>
-        </div>
 
-        @section Scripts {
-            @{
-                await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            }
+                <div class="mb-3">
+                    <label for="hanTra" class="form-label">Hạn trả <span class="text-danger">*</span></label>
+                    <input type="datetime-local" id="hanTra" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="ghiChu" class="form-label">Ghi chú</label>
+                    <textarea id="ghiChu" class="form-control" rows="3"
+                              placeholder="Nhập ghi chú (tùy chọn)"></textarea>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/" class="btn btn-secondary">Hủy</a>
+                    <button type="button" class="btn btn-primary" onclick="inPhieu()">Tạo phiếu mượn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function inPhieu() {
+        // Lấy dữ liệu từ form
+        const nguoiMuon = document.getElementById('nguoiMuon').value.trim();
+        const sachMuon = document.getElementById('sachMuon').value.trim();
+        const hanTra = document.getElementById('hanTra').value.trim();
+        const ghiChu = document.getElementById('ghiChu').value.trim();
+
+        // Kiểm tra dữ liệu bắt buộc
+        if (!nguoiMuon || !sachMuon || !hanTra) {
+            alert('❌ Vui lòng điền đầy đủ thông tin bắt buộc!');
+            return;
         }
+
+        // Gửi dữ liệu đến server
+        fetch('/api/muontra/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nguoiMuon: nguoiMuon,
+                sachMuon: sachMuon,
+                hanTra: hanTra,
+                ghiChu: ghiChu
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hiển thị chi tiết phiếu
+                    alert('v ' + data.message + '\n\n' +
+                        'Chi tiết phiếu:\n' +
+                        '- ID: ' + data.data.id + '\n' +
+                        '- Người mượn: ' + data.data.nguoiMuon + '\n' +
+                        '- Sách: ' + data.data.sachMuon + '\n' +
+                        '- Hạn trả: ' + data.data.hanTra + '\n' +
+                        '- Ghi chú: ' + (data.data.ghiChu || '(Không có)') + '\n' +
+                        '- Ngày tạo: ' + new Date(data.data.ngayTao).toLocaleString('vi-VN'));
+
+                    // Reset form
+                    document.getElementById('formPhieu').reset();
+
+                    // Quay về trang chủ sau 2 giây
+                    setTimeout(function () {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    alert('❌ Lỗi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Có lỗi xảy ra: ' + error);
+            });
+    }
+</script>

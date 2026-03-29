@@ -1,226 +1,85 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
 using WebApp.Models;
 
 namespace WebApp.Controllers
 {
     public class MuonTraController : Controller
     {
-        private readonly QuanLyThuVienContext _context;
+        // Mảng lưu trữ tạm thời các phiếu mượn (trong bộ nhớ)
+        private static List<dynamic> muonTraList = new List<dynamic>();
 
-        public MuonTraController(QuanLyThuVienContext context)
+        public IActionResult Create()
         {
-            _context = context;
-        }
-
-        // Danh sách phiếu mượn
-        public async Task<IActionResult> Index()
-        {
-            var muonTraList = await _context.MuonTras
-                .Include(m => m.NguoiDung)
-                .Include(m => m.DangKyCaBiet)
-                    .ThenInclude(d => d.Sach)
-                .OrderByDescending(m => m.NgayTao)
-                .ToListAsync();
-
-            return View(muonTraList);
-        }
-
-        // Form thêm mới phiếu mượn
-        public async Task<IActionResult> Create()
-        {
-            // Lấy danh sách người dùng
-            var nguoiDungList = await _context.NguoiDungs
-                .Where(n => n.TrangThai == "Hoạt động")
-                .ToListAsync();
-
-            // Lấy danh sách sách đang có sẵn
-            var sachList = await _context.DangKyCaBiets
-                .Include(d => d.Sach)
-                .Where(d => d.TinhTrang == "Có sẵn") // Sách có sẵn để mượn
-                .ToListAsync();
-
-            ViewBag.NguoiDung = nguoiDungList;
-            ViewBag.Sach = sachList;
-
             return View();
         }
 
-        // Lưu phiếu mượn
+        // API để lưu phiếu mượn vào mảng
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MuonTra muonTra)
+        [Route("api/muontra/save")]
+        public IActionResult SavePhieu([FromBody] PhieuMuonModel phieu)
         {
-            if (ModelState.IsValid)
+            if (phieu == null || string.IsNullOrWhiteSpace(phieu.NguoiMuon) ||
+                string.IsNullOrWhiteSpace(phieu.SachMuon) || string.IsNullOrWhiteSpace(phieu.HanTra))
             {
-                // Kiểm tra người dùng có tồn tại không
-                var nguoiDung = await _context.NguoiDungs.FindAsync(muonTra.NguoiDungId);
-                if (nguoiDung == null)
-                {
-                    ModelState.AddModelError("", "Người dùng không tồn tại");
-                }
-
-                // Kiểm tra sách có tồn tại không
-                var dangKyCapBiet = await _context.DangKyCaBiets.FindAsync(muonTra.DangKyCaBietId);
-                if (dangKyCapBiet == null)
-                {
-                    ModelState.AddModelError("", "Sách không tồn tại");
-                }
-
-                if (ModelState.IsValid)
-                {
-                    muonTra.NgayTao = DateTime.Now;
-                    muonTra.TrangThai = "Đang mượn";
-                    muonTra.Loai = "Mượn";
-
-                    _context.MuonTras.Add(muonTra);
-
-                    // Cập nhật trạng thái sách
-                    if (dangKyCapBiet != null)
-                    {
-                        dangKyCapBiet.TinhTrang = "Đã mượn";
-                        dangKyCapBiet.NgayChoMuon = DateTime.Now;
-                        _context.DangKyCaBiets.Update(dangKyCapBiet);
-                    }
-
-                    await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "Tạo phiếu mượn thành công!";
-                    return RedirectToAction(nameof(Index));
-                }
+                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
             }
 
-            // Nếu có lỗi, load lại dữ liệu
-            var nguoiDungList = await _context.NguoiDungs.ToListAsync();
-            var sachList = await _context.DangKyCaBiets.Include(d => d.Sach).ToListAsync();
+            try
+            {
+                // Thêm phiếu vào mảng
+                var phieuMoi = new
+                {
+                    Id = muonTraList.Count + 1,
+                    NguoiMuon = phieu.NguoiMuon,
+                    SachMuon = phieu.SachMuon,
+                    HanTra = phieu.HanTra,
+                    GhiChu = phieu.GhiChu,
+                    NgayTao = DateTime.Now
+                };
 
-            ViewBag.NguoiDung = nguoiDungList;
-            ViewBag.Sach = sachList;
+                muonTraList.Add(phieuMoi);
 
-            return View(muonTra);
+                return Ok(new { success = true, message = "Tạo phiếu mượn thành công!", data = phieuMoi });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
 
-        // Chi tiết phiếu mượn
-        public async Task<IActionResult> Details(int id)
+        // Lấy danh sách tất cả phiếu mượn
+        public IActionResult Index()
         {
-            var muonTra = await _context.MuonTras
-                .Include(m => m.NguoiDung)
-                .Include(m => m.DangKyCaBiet)
-                    .ThenInclude(d => d.Sach)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (muonTra == null)
-            {
-                return NotFound();
-            }
-
-            return View(muonTra);
+            return View(muonTraList);
         }
 
-        // Form chỉnh sửa phiếu mượn
-        public async Task<IActionResult> Edit(int id)
+        // Xem chi tiết phiếu mượn
+        public IActionResult Details(int id)
         {
-            var muonTra = await _context.MuonTras.FindAsync(id);
-
-            if (muonTra == null)
-            {
+            var phieu = muonTraList.FirstOrDefault(p => (int)p.Id == id);
+            if (phieu == null)
                 return NotFound();
-            }
 
-            var nguoiDungList = await _context.NguoiDungs.ToListAsync();
-            var sachList = await _context.DangKyCaBiets.Include(d => d.Sach).ToListAsync();
-
-            ViewBag.NguoiDung = nguoiDungList;
-            ViewBag.Sach = sachList;
-
-            return View(muonTra);
-        }
-
-        // Lưu chỉnh sửa
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, MuonTra muonTra)
-        {
-            if (id != muonTra.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.MuonTras.Update(muonTra);
-                    await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "Cập nhật phiếu mượn thành công!";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    return NotFound();
-                }
-            }
-
-            var nguoiDungList = await _context.NguoiDungs.ToListAsync();
-            var sachList = await _context.DangKyCaBiets.Include(d => d.Sach).ToListAsync();
-
-            ViewBag.NguoiDung = nguoiDungList;
-            ViewBag.Sach = sachList;
-
-            return View(muonTra);
-        }
-
-        // Trả sách
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TraSach(int id, int? tienPhat)
-        {
-            var muonTra = await _context.MuonTras
-                .Include(m => m.DangKyCaBiet)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (muonTra == null)
-            {
-                return NotFound();
-            }
-
-            muonTra.NgayTra = DateTime.Now;
-            muonTra.TrangThai = "Đã trả";
-            muonTra.TienPhat = tienPhat ?? 0;
-
-            // Cập nhật trạng thái sách
-            if (muonTra.DangKyCaBiet != null)
-            {
-                muonTra.DangKyCaBiet.TinhTrang = "Có sẵn";
-                muonTra.DangKyCaBiet.NgayNhanSach = DateTime.Now;
-                _context.DangKyCaBiets.Update(muonTra.DangKyCaBiet);
-            }
-
-            _context.MuonTras.Update(muonTra);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Ghi nhận trả sách thành công!";
-            return RedirectToAction(nameof(Index));
+            return View(phieu);
         }
 
         // Xóa phiếu mượn
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var muonTra = await _context.MuonTras.FindAsync(id);
-
-            if (muonTra != null)
-            {
-                _context.MuonTras.Remove(muonTra);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "Xóa phiếu mượn thành công!";
-            }
+            var phieu = muonTraList.FirstOrDefault(p => (int)p.Id == id);
+            if (phieu != null)
+                muonTraList.Remove(phieu);
 
             return RedirectToAction(nameof(Index));
         }
+    }
+
+    // Model để nhận dữ liệu từ client
+    public class PhieuMuonModel
+    {
+        public string NguoiMuon { get; set; }
+        public string SachMuon { get; set; }
+        public string HanTra { get; set; }
+        public string GhiChu { get; set; }
     }
 }
