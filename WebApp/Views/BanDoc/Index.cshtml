@@ -1,0 +1,46 @@
+@model IEnumerable<WebApp.Models.NguoiDung>
+
+@{
+    ViewData["Title"] = "Quản lý Bạn đọc";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Thêm Bạn đọc</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Họ Tên</th>
+            <th>Giới Tính</th>
+            <th>Ngày Sinh</th>
+            <th>Email</th>
+            <th>SĐT</th>
+            <th>Địa Chỉ</th>
+            <th>Loại Thẻ</th>
+            <th>Trạng Thái</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.HoTen</td>
+                <td>@item.GioiTinh</td>
+                <td>@item.NgaySinh?.ToString("dd/MM/yyyy")</td>
+                <td>@item.Email</td>
+                <td>@item.Sdt</td>
+                <td>@item.DiaChi</td>
+                <td>@item.LoaiThe</td>
+                <td>@item.TrangThai</td>
+                <td>
+                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Id">Sửa</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
