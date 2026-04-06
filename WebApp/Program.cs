@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
+using Library.Core.Interfaces;
+using Library.Data;
+using Library.Data.Repositories;
+using Library.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,12 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<QuanLyThuVienContext>(options =>
     options.UseMySQL(connectionString!));
+
+// Register Repository (DAL)
+builder.Services.AddScoped<ISachRepository, SachRepository>();
+
+// Register Service (BLL)
+builder.Services.AddScoped<ISachService, SachService>();
 
 var app = builder.Build();
 
