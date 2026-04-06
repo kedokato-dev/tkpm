@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Data; // DbContext
-using WebApp.Models; // NguoiDung model
+using Library.Data;
+using Library.Core.Entities;
 
 namespace WebApp.Controllers
 {
