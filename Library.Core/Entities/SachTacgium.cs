@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace WebApp.Models;
+namespace Library.Core.Entities;
 
 public partial class SachTacgium
 {

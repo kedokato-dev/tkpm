@@ -87,8 +87,8 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
-using WebApp.Models;
+using Library.Core.Entities;
+using Library.Data;
 
 namespace WebApp.Controllers
 {

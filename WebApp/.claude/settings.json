@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/trananhquan/Hoc Tap/tkpm/**)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet add:*)",
+      "Bash(mkdir -p Entities Interfaces)",
+      "Bash(rm -f Class1.cs)",
+      "Bash(mkdir -p Repositories)",
+      "Bash(rm -f Models/Sach.cs Models/TheLoai.cs Models/NhaXuatBan.cs Models/TacGium.cs Models/SachTacgium.cs Models/DangKyCaBiet.cs Models/DatMuon.cs Models/MuonTra.cs Models/NguoiDung.cs Models/BaiDang.cs Models/BinhLuan.cs Models/ChuDe.cs Models/FormGopY.cs Models/ViTri.cs)",
+      "Bash(rm -f Data/QuanLyThuVienContext.cs)",
+      "Bash(rmdir Data)"
+    ],
+    "additionalDirectories": [
+      "/Users/trananhquan/Hoc Tap/tkpm/Library.Core/Entities",
+      "/Users/trananhquan/Hoc Tap/tkpm/Library.Core/Interfaces",
+      "/Users/trananhquan/Hoc Tap/tkpm/Library.Data",
+      "/Users/trananhquan/Hoc Tap/tkpm/Library.Service"
+    ]
+  }
+}

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Models;
+using Library.Core.Entities;
 
-namespace WebApp.Data;
+namespace Library.Data;
 
 public partial class QuanLyThuVienContext : DbContext
 {

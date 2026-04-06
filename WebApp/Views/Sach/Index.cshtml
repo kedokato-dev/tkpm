@@ -1,4 +1,4 @@
-@model IEnumerable<WebApp.Models.Sach>
+@model IEnumerable<Library.Core.Entities.Sach>
 @{
     ViewData["Title"] = "Quản lý Sách";
 }
@@ -33,7 +33,7 @@
                 <label class="form-label fw-semibold">Thể loại</label>
                 <select name="theloaiId" class="form-select">
                     <option value="">-- Tất cả --</option>
-                    @foreach (var tl in (IEnumerable<WebApp.Models.TheLoai>)ViewBag.TheLoais)
+                    @foreach (var tl in (IEnumerable<Library.Core.Entities.TheLoai>)ViewBag.TheLoais)
                     {
                         <option value="@tl.Id" selected="@(ViewBag.TheloaiId != null && (int)ViewBag.TheloaiId == tl.Id)">@tl.Ten</option>
                     }
