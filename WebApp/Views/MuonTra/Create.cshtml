@@ -4,42 +4,213 @@
     ViewData["Title"] = "Tạo phiếu mượn sách";
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h2><i class="bi bi-plus-circle"></i> Tạo phiếu mượn sách</h2>
-            <hr />
-
-            <form method="get" id="formPhieu">
-                <div class="mb-3">
-                    <label for="nguoiMuon" class="form-label">Người mượn <span class="text-danger">*</span></label>
-                    <input type="text" id="nguoiMuon" class="form-control" placeholder="Nhập tên người mượn" required />
+        <div class="col-md-10 offset-md-1">
+            <!-- Header -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-body p-4 bg-gradient"
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h2 class="text-white mb-1">
+                        <i class="bi bi-plus-circle me-2"></i> Tạo Phiếu Mượn Sách
+                    </h2>
+                    <p class="text-white-50 mb-0">Điền đầy đủ thông tin để tạo phiếu mượn</p>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="sachMuon" class="form-label">Chọn sách <span class="text-danger">*</span></label>
-                    <input type="text" id="sachMuon" class="form-control" placeholder="Nhập tên sách" required />
-                </div>
+            <!-- Form -->
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <form method="get" id="formPhieu">
+                        <!-- Hàng 1: Người mượn + Số điện thoại -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="nguoiMuon" class="form-label fw-bold">
+                                    <i class="bi bi-person-fill text-primary"></i> Người mượn
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="nguoiMuon" class="form-control form-control-lg"
+                                       placeholder="Nhập tên người mượn" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sdt" class="form-label fw-bold">
+                                    <i class="bi bi-telephone-fill text-primary"></i> Số điện thoại
+                                </label>
+                                <input type="tel" id="sdt" class="form-control form-control-lg"
+                                       placeholder="Nhập số điện thoại" />
+                            </div>
+                        </div>
 
-                <div class="mb-3">
-                    <label for="hanTra" class="form-label">Hạn trả <span class="text-danger">*</span></label>
-                    <input type="datetime-local" id="hanTra" class="form-control" required />
-                </div>
+                        <!-- Hàng 2: Email + CCCD -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-bold">
+                                    <i class="bi bi-envelope-fill text-primary"></i> Email
+                                </label>
+                                <input type="email" id="email" class="form-control form-control-lg"
+                                       placeholder="Nhập email" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cccd" class="form-label fw-bold">
+                                    <i class="bi bi-credit-card-fill text-primary"></i> CCCD/ID
+                                </label>
+                                <input type="text" id="cccd" class="form-control form-control-lg"
+                                       placeholder="Nhập số CCCD" />
+                            </div>
+                        </div>
 
-                <div class="mb-3">
-                    <label for="ghiChu" class="form-label">Ghi chú</label>
-                    <textarea id="ghiChu" class="form-control" rows="3"
-                              placeholder="Nhập ghi chú (tùy chọn)"></textarea>
-                </div>
+                        <hr class="my-4">
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="/" class="btn btn-secondary">Hủy</a>
-                    <button type="button" class="btn btn-primary" onclick="inPhieu()">Tạo phiếu mượn</button>
+                        <!-- Hàng 3: Chọn sách + ISBN -->
+                        <div class="row mb-4">
+                            <div class="col-md-7">
+                                <label for="sachMuon" class="form-label fw-bold">
+                                    <i class="bi bi-book-fill text-success"></i> Chọn sách
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="sachMuon" class="form-control form-control-lg"
+                                       placeholder="Nhập tên sách" required />
+                            </div>
+                            <div class="col-md-5">
+                                <label for="isbn" class="form-label fw-bold">
+                                    <i class="bi bi-barcode text-success"></i> ISBN
+                                </label>
+                                <input type="text" id="isbn" class="form-control form-control-lg"
+                                       placeholder="Nhập mã ISBN" />
+                            </div>
+                        </div>
+
+                        <!-- Hàng 4: Tác giả + Nhà xuất bản -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="tacGia" class="form-label fw-bold">
+                                    <i class="bi bi-pen-fill text-success"></i> Tác giả
+                                </label>
+                                <input type="text" id="tacGia" class="form-control form-control-lg"
+                                       placeholder="Nhập tên tác giả" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nhaXuatBan" class="form-label fw-bold">
+                                    <i class="bi bi-building text-success"></i> Nhà xuất bản
+                                </label>
+                                <input type="text" id="nhaXuatBan" class="form-control form-control-lg"
+                                       placeholder="Nhập nhà xuất bản" />
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Hàng 5: Ngày mượn + Hạn trả -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="ngayMuon" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event text-warning"></i> Ngày mượn
+                                </label>
+                                <input type="datetime-local" id="ngayMuon" class="form-control form-control-lg" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hanTra" class="form-label fw-bold">
+                                    <i class="bi bi-calendar2-check text-warning"></i> Hạn trả
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="datetime-local" id="hanTra" class="form-control form-control-lg"
+                                       required />
+                            </div>
+                        </div>
+
+                        <!-- Hàng 6: Số lượng + Tình trạng -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="soLuong" class="form-label fw-bold">
+                                    <i class="bi bi-stack text-info"></i> Số lượng
+                                </label>
+                                <input type="number" id="soLuong" class="form-control form-control-lg" placeholder="1"
+                                       value="1" min="1" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tinhTrang" class="form-label fw-bold">
+                                    <i class="bi bi-check-circle-fill text-info"></i> Tình trạng sách
+                                </label>
+                                <select id="tinhTrang" class="form-control form-control-lg">
+                                    <option value="">-- Chọn tình trạng --</option>
+                                    <option value="Tốt">Tốt</option>
+                                    <option value="Bình thường">Bình thường</option>
+                                    <option value="Cần sửa chữa">Cần sửa chữa</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hàng 7: Ghi chú -->
+                        <div class="mb-4">
+                            <label for="ghiChu" class="form-label fw-bold">
+                                <i class="bi bi-chat-left-text text-secondary"></i> Ghi chú
+                            </label>
+                            <textarea id="ghiChu" class="form-control" rows="4"
+                                      placeholder="Nhập ghi chú, lưu ý đặc biệt (tùy chọn)"></textarea>
+                            <small class="text-muted d-block mt-2">
+                                <i class="bi bi-info-circle"></i> Tối đa 500 ký tự
+                            </small>
+                        </div>
+
+                        <!-- Nút hành động -->
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-5">
+                            <a href="/" class="btn btn-lg btn-outline-secondary rounded-lg px-5">
+                                <i class="bi bi-x-circle me-2"></i> Hủy
+                            </a>
+                            <button type="button" class="btn btn-lg btn-primary rounded-lg px-5" onclick="inPhieu()">
+                                <i class="bi bi-check-circle me-2"></i> Tạo phiếu mượn
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+
+            <!-- Info Box -->
+            <div class="alert alert-info mt-4 border-start border-4 border-info">
+                <i class="bi bi-lightbulb me-2"></i>
+                <strong>Ghi chú:</strong> Các trường có dấu <span class="text-danger">*</span> là bắt buộc phải điền.
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .form-control-lg,
+    .btn-lg {
+        border-radius: 8px;
+        border: 1.5px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-lg:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .card {
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+    }
+
+    .fw-bold {
+        font-size: 1.05rem;
+    }
+
+    label i {
+        margin-right: 6px;
+    }
+</style>
 
 <script>
     function inPhieu() {
@@ -47,13 +218,29 @@
         const nguoiMuon = document.getElementById('nguoiMuon').value.trim();
         const sachMuon = document.getElementById('sachMuon').value.trim();
         const hanTra = document.getElementById('hanTra').value.trim();
-        const ghiChu = document.getElementById('ghiChu').value.trim();
 
         // Kiểm tra dữ liệu bắt buộc
         if (!nguoiMuon || !sachMuon || !hanTra) {
-            alert('❌ Vui lòng điền đầy đủ thông tin bắt buộc!');
+            alert('❌ Vui lòng điền đầy đủ thông tin bắt buộc (Người mượn, Sách, Hạn trả)!');
             return;
         }
+
+        // Lấy tất cả dữ liệu
+        const phieuData = {
+            nguoiMuon: nguoiMuon,
+            sdt: document.getElementById('sdt').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            cccd: document.getElementById('cccd').value.trim(),
+            sachMuon: sachMuon,
+            isbn: document.getElementById('isbn').value.trim(),
+            tacGia: document.getElementById('tacGia').value.trim(),
+            nhaXuatBan: document.getElementById('nhaXuatBan').value.trim(),
+            ngayMuon: document.getElementById('ngayMuon').value.trim(),
+            hanTra: hanTra,
+            soLuong: document.getElementById('soLuong').value,
+            tinhTrang: document.getElementById('tinhTrang').value,
+            ghiChu: document.getElementById('ghiChu').value.trim()
+        };
 
         // Gửi dữ liệu đến server
         fetch('/api/muontra/save', {
@@ -61,28 +248,22 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                nguoiMuon: nguoiMuon,
-                sachMuon: sachMuon,
-                hanTra: hanTra,
-                ghiChu: ghiChu
-            })
+            body: JSON.stringify(phieuData)
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Hiển thị chi tiết phiếu
-                    alert('v ' + data.message + '\n\n' +
+                    alert('✅ ' + data.message + '\n\n' +
                         'Chi tiết phiếu:\n' +
                         '- ID: ' + data.data.id + '\n' +
                         '- Người mượn: ' + data.data.nguoiMuon + '\n' +
                         '- Sách: ' + data.data.sachMuon + '\n' +
                         '- Hạn trả: ' + data.data.hanTra + '\n' +
-                        '- Ghi chú: ' + (data.data.ghiChu || '(Không có)') + '\n' +
                         '- Ngày tạo: ' + new Date(data.data.ngayTao).toLocaleString('vi-VN'));
 
                     // Reset form
                     document.getElementById('formPhieu').reset();
+                    document.getElementById('soLuong').value = '1';
 
                     // Quay về trang chủ sau 2 giây
                     setTimeout(function () {
